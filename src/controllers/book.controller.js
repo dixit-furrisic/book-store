@@ -8,19 +8,47 @@ import {
 } from "../services/book.service.js";
 
 // Create Book
+// export const addBook = async (req, res) => {
+//     try {
+//         const { title, caption, rating } = req.body;
+
+//         if (!req.file || !title || !caption || !rating) {
+//             return res.status(400).json({ message: "Please provide all fields" });
+//         }
+
+//         const newBook = await createBook({
+//             title,
+//             caption,
+//             rating,
+//             image: req.file.path,
+//             user: req.user._id,
+//         });
+
+//         res.status(201).json(newBook);
+//     } catch (error) {
+//         console.error("Error creating book", error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
 export const addBook = async (req, res) => {
     try {
-        const { title, caption, rating } = req.body;
+        const { title, caption, rating, image } = req.body;
 
-        if (!req.file || !title || !caption || !rating) {
+        if (!image || !title || !caption || !rating) {
             return res.status(400).json({ message: "Please provide all fields" });
         }
+
+        // Upload base64 image to Cloudinary
+        const result = await cloudinary.uploader.upload(image, {
+            folder: "book_images",
+        });
 
         const newBook = await createBook({
             title,
             caption,
             rating,
-            image: req.file.path,
+            image: result.secure_url,
             user: req.user._id,
         });
 
@@ -28,8 +56,9 @@ export const addBook = async (req, res) => {
     } catch (error) {
         console.error("Error creating book", error);
         res.status(500).json({ message: error.message });
-    }
-};
+
+    };
+}
 
 // Get Paginated Books
 export const getBooks = async (req, res) => {

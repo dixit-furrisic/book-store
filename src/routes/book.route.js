@@ -7,7 +7,8 @@ import { addBook, deleteBook, getBooks, getUserBooks } from "../controllers/book
 
 const router = express.Router();
 
-router.post("/", authMiddleware, uploadBookImage.single("image"), addBook);
+// router.post("/", authMiddleware, uploadBookImage.single("image"), addBook);
+router.post("/", authMiddleware, addBook);
 router.get("/", authMiddleware, getBooks);
 router.get("/user", authMiddleware, getUserBooks);
 router.delete("/:id", authMiddleware, deleteBook);
